@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+html = '''<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -8,21 +9,22 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; padding: 20px; }
   h1 { text-align: center; color: #2d3748; margin-bottom: 8px; font-size: 1.4rem; }
-  #score { text-align: center; color: #4a5568; margin-bottom: 20px; font-size: 0.95rem; }
+  #score { text-align: center; color: #4a5568; margin-bottom: 12px; font-size: 0.95rem; }
+  #round-info { text-align: center; color: #667eea; margin-bottom: 20px; font-size: 0.9rem; font-weight: bold; }
   #game-container { position: relative; display: flex; justify-content: space-between; gap: 40px; max-width: 900px; margin: 0 auto; }
   #svg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
-  .column { flex: 1; display: flex; flex-direction: column; gap: 12px; z-index: 1; }
+  .column { flex: 1; display: flex; flex-direction: column; gap: 10px; z-index: 1; }
   .card {
     background: white;
     border: 2px solid #cbd5e0;
     border-radius: 10px;
-    padding: 12px 16px;
+    padding: 10px 14px;
     cursor: pointer;
-    font-size: 0.88rem;
+    font-size: 0.85rem;
     line-height: 1.4;
     transition: border-color 0.2s, background 0.2s;
     user-select: none;
-    min-height: 56px;
+    min-height: 52px;
     display: flex;
     align-items: center;
   }
@@ -47,7 +49,8 @@
 </head>
 <body>
 <h1>Begrippenspel - Doelgroepen 3</h1>
-<p id="score">Score: <span id="correct-count">0</span> / 10</p>
+<p id="score">Score: <span id="correct-count">0</span> / <span id="total">10</span></p>
+<p id="round-info"></p>
 <div id="game-container">
   <svg id="svg-layer"></svg>
   <div class="column" id="left-col"></div>
@@ -55,39 +58,85 @@
 </div>
 <div id="message"></div>
 <div id="controls">
-  <button onclick="resetGame()">Opnieuw</button>
+  <button onclick="nextRound()" id="next-btn" style="display:none">Volgende ronde</button>
+  <button onclick="resetGame()">Opnieuw vanaf begin</button>
 </div>
 
 <script>
-const data = [
+const allData = [
   { term: "Diversiteitsdenken", def: "Benadering die de nadruk legt op de meervoudige identiteiten van een persoon en hoe die identiteiten elkaar beinvloeden." },
+  { term: "Kruispuntdenken", def: "Manier van denken over verschil, vertrekkend vanuit de samenhang van kenmerken zoals gender, etniciteit, klasse en seksualiteit." },
+  { term: "Orthopedagogisch grondplan", def: "Kader dat hulpverleners helpt holistisch te kijken naar elk hulpverleningstraject, met afstemming tussen vraag en aanbod." },
+  { term: "Tendensen", def: "Maatschappelijke stromingen die de orthopedagogische praktijk beinvloeden." },
+  { term: "Dezelfde bril", def: "Holistische visie op mensen en hun context, waarbij verder gekeken wordt dan beperkingen of stoornissen." },
   { term: "ACEs", def: "Ingrijpende kind- en jeugdervaringen voor de leeftijd van 18 jaar met een duidelijke impact op de verdere ontwikkeling." },
   { term: "PACEs", def: "Beschermende en compenserende ervaringen die de veerkracht van kinderen versterken en de negatieve effecten van ACEs compenseren." },
+  { term: "Het Kaiser onderzoek", def: "Baanbrekend onderzoek (1998) van Felitti en Anda naar de samenhang tussen ongunstige ervaringen in de kindertijd en de gezondheid als volwassene." },
   { term: "Problematische opvoedingssituatie (POS)", def: "Opvoedingssituatie die door betrokkenen als nagenoeg perspectiefloos wordt ervaren en waarbij men zonder externe hulp de situatie niet kan verbeteren." },
-  { term: "Toxische stress", def: "Langdurige, extreme activatie van het stresssysteem zonder voldoende beschermende factoren, met schadelijke gevolgen voor hersenontwikkeling." },
+  { term: "Verontrustende opvoedingssituatie (VOS)", def: "Situatie waarbij de ontwikkelingskansen van een minderjarige bedreigd zijn of de integriteit van de minderjarige is aangetast." },
+  { term: "Nadine Burke Harris", def: "Pionier in het onderzoek naar ACEs; richtte het Center for Youth Wellness op en verbond ACEs aan beleid en gezondheidszorg." },
+  { term: "Piramidemodel van ACEs", def: "Model dat de mogelijke effecten van ACEs visualiseert, van vroege ervaringen tot sociale problemen, ziektes en vroeg overlijden." },
+  { term: "Hartmodel van PACEs", def: "Model van Morris & Hays-Grudo dat het positieve effect van PACEs op gezondheid en ontwikkeling visualiseert via twee domeinen: steun en hulpbronnen." },
+  { term: "Trauma", def: "Emotionele, fysieke of psychologische gevolgen van een ingrijpende gebeurtenis, ongeacht de leeftijd van de persoon." },
+  { term: "Enkelvoudig trauma", def: "Eenmalige, onverwachte ingrijpende gebeurtenis met trauma als gevolg, zoals een ernstig verkeersongeval." },
+  { term: "Meervoudig trauma", def: "Combinatie van verschillende ingrijpende gebeurtenissen in meerdere levensdomeinen met trauma als gevolg." },
+  { term: "Kleine t trauma", def: "Dagelijkse negatieve ervaringen zoals pesten of discriminatie die door cumulatie traumatisch kunnen worden." },
   { term: "Complex trauma", def: "Meervoudig trauma waarbij de zorgfiguren betrokken zijn en het trauma verweven zit met de ontwikkelingstaken van het kind." },
+  { term: "Ontwikkelingstrauma", def: "Meerdere chronische traumatische ervaringen, vaak vroeg in de ontwikkeling en van interpersoonlijke aard." },
+  { term: "Protectieve factoren", def: "Factoren die het welzijn van een kind ondersteunen en de negatieve impact van ACEs verminderen." },
+  { term: "Biologisch verklaringsmodel", def: "Model dat verklaart hoe en waarom ACEs diepe effecten hebben op hersenontwikkeling, sociaal-emotionele problemen en de algemene gezondheid." },
+  { term: "Toxische stress", def: "Langdurige, extreme activatie van het stresssysteem zonder voldoende beschermende factoren, met schadelijke gevolgen voor hersenontwikkeling." },
+  { term: "Center for Youth Wellness", def: "Organisatie opgericht door Nadine Burke Harris in San Francisco voor de aanpak van ACEs via onderzoek en hulpverlening." },
+  { term: "Herstel", def: "Het proces waarbij kinderen en jongeren met ACEs, via goede begeleiding en PACEs, opnieuw kunnen functioneren en groeien." },
+  { term: "Trauma-informed opvoedingsinterventies", def: "Opvoedingsprogrammas gericht op hoe ingrijpende ervaringen van verzorgers kunnen doorwerken in de opvoeding en het gezin." },
+  { term: "Uitholling", def: "Risico waarbij begrippen zoals trauma, veerkracht of veiligheid te breed worden ingezet en hun specifieke betekenis verliezen." },
   { term: "Agency", def: "Het gevoel dat je eigen handelen invloed heeft op de situatie; centraal in veerkrachtherstel." },
   { term: "Veerkrachthuis", def: "Metafoor van Jan Van Gils die veerkracht voorstelt als een huis met vijf bouwstenen: gedragenheid, zingeving, vaardigheden, eigenwaarde en humor." },
-  { term: "Uitholling", def: "Risico waarbij begrippen zoals trauma, veerkracht of veiligheid te breed worden ingezet en hun specifieke betekenis verliezen." },
-  { term: "Kruispuntdenken", def: "Manier van denken over verschil, vertrekkend vanuit de samenhang van kenmerken zoals gender, etniciteit, klasse en seksualiteit." }
+  { term: "Belang van een netwerk", def: "Het belang van een sterk sociaal netwerk rondom kwetsbare kinderen en jongeren voor veerkracht en herstel." }
 ];
 
+const ROUND_SIZE = 10;
+let currentRound = 0;
+let totalCorrect = 0;
 let selectedLeft = null;
 let selectedRight = null;
-let correctCount = 0;
+let roundCorrect = 0;
+let currentData = [];
 
 function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
+function getRounds() {
+  const shuffled = shuffle(allData);
+  const rounds = [];
+  for (let i = 0; i < shuffled.length; i += ROUND_SIZE) {
+    rounds.push(shuffled.slice(i, i + ROUND_SIZE));
+  }
+  return rounds;
+}
+
+let rounds = [];
+
 function buildGame() {
-  const shuffledDefs = shuffle(data.map((d, i) => ({ ...d, origIndex: i })));
+  currentData = rounds[currentRound];
+  roundCorrect = 0;
+  selectedLeft = null;
+  selectedRight = null;
+  document.getElementById('svg-layer').innerHTML = '';
+  document.getElementById('message').textContent = '';
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('correct-count').textContent = totalCorrect;
+  document.getElementById('total').textContent = allData.length;
+  document.getElementById('round-info').textContent = `Ronde ${currentRound + 1} van ${rounds.length} (${currentData.length} begrippen)`;
+
+  const shuffledDefs = shuffle(currentData.map((d, i) => ({ ...d, origIndex: i })));
   const leftCol = document.getElementById('left-col');
   const rightCol = document.getElementById('right-col');
   leftCol.innerHTML = '';
   rightCol.innerHTML = '';
 
-  data.forEach((item, i) => {
+  currentData.forEach((item, i) => {
     const card = document.createElement('div');
     card.className = 'card';
     card.textContent = item.term;
@@ -111,7 +160,6 @@ function buildGame() {
 function onCardClick(card) {
   if (card.classList.contains('correct')) return;
   const side = card.dataset.side;
-
   if (side === 'left') {
     if (selectedLeft) selectedLeft.classList.remove('selected');
     selectedLeft = card;
@@ -121,7 +169,6 @@ function onCardClick(card) {
     selectedRight = card;
     card.classList.add('selected');
   }
-
   if (selectedLeft && selectedRight) checkMatch();
 }
 
@@ -135,10 +182,16 @@ function checkMatch() {
     selectedLeft.classList.add('correct');
     selectedRight.classList.add('correct');
     drawLine(selectedLeft, selectedRight, '#48bb78');
-    correctCount++;
-    document.getElementById('correct-count').textContent = correctCount;
-    if (correctCount === data.length) {
-      document.getElementById('message').textContent = 'Geweldig! Alle begrippen correct gekoppeld!';
+    roundCorrect++;
+    totalCorrect++;
+    document.getElementById('correct-count').textContent = totalCorrect;
+    if (roundCorrect === currentData.length) {
+      if (currentRound + 1 < rounds.length) {
+        document.getElementById('message').textContent = 'Ronde voltooid!';
+        document.getElementById('next-btn').style.display = 'inline-block';
+      } else {
+        document.getElementById('message').textContent = 'Alle ' + allData.length + ' begrippen correct! Geweldig!';
+      }
     }
   } else {
     selectedLeft.classList.add('wrong');
@@ -161,12 +214,10 @@ function drawLine(leftCard, rightCard, color) {
   const containerRect = container.getBoundingClientRect();
   const lRect = leftCard.getBoundingClientRect();
   const rRect = rightCard.getBoundingClientRect();
-
   const x1 = lRect.right - containerRect.left;
   const y1 = lRect.top + lRect.height / 2 - containerRect.top;
   const x2 = rRect.left - containerRect.left;
   const y2 = rRect.top + rRect.height / 2 - containerRect.top;
-
   const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
   line.setAttribute('x1', x1); line.setAttribute('y1', y1);
   line.setAttribute('x2', x2); line.setAttribute('y2', y2);
@@ -176,20 +227,26 @@ function drawLine(leftCard, rightCard, color) {
   svg.appendChild(line);
 }
 
-function resetGame() {
-  correctCount = 0;
-  selectedLeft = null;
-  selectedRight = null;
-  document.getElementById('correct-count').textContent = 0;
-  document.getElementById('message').textContent = '';
-  document.getElementById('svg-layer').innerHTML = '';
+function nextRound() {
+  currentRound++;
   buildGame();
 }
 
-window.onload = buildGame;
+function resetGame() {
+  currentRound = 0;
+  totalCorrect = 0;
+  rounds = getRounds();
+  buildGame();
+}
+
+window.onload = resetGame;
 window.addEventListener('resize', () => {
   document.getElementById('svg-layer').innerHTML = '';
 });
 </script>
 </body>
-</html>
+</html>'''
+
+with open('/root/output/index.html', 'w', encoding='utf-8') as f:
+    f.write(html)
+print("Klaar,", len(html), "tekens")
