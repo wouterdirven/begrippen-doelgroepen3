@@ -1,4 +1,4 @@
-html = """<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -60,7 +60,6 @@ html = """<!DOCTYPE html>
   <button onclick="nextRound()" id="next-btn" style="display:none">Volgende ronde</button>
   <button onclick="resetGame()">Opnieuw vanaf begin</button>
 </div>
-
 <script>
 const allData = [
   { term: "Diversiteitsdenken", def: "Benadering die de nadruk legt op de meervoudige identiteiten van een persoon en hoe die identiteiten elkaar beinvloeden." },
@@ -241,8 +240,4 @@ window.addEventListener('resize', () => {
 });
 </script>
 </body>
-</html>"""
-
-with open('/root/output/index.html', 'w', encoding='utf-8') as f:
-    f.write(html)
-print("Klaar,", len(html), "tekens")
+</html>
