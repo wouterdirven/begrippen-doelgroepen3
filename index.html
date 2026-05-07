@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Begrippenspel - Doelgroepen 3</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #f0f4f8; min-height: 100vh; padding: 20px; }
+  h1 { text-align: center; color: #2d3748; margin-bottom: 8px; font-size: 1.4rem; }
+  #score { text-align: center; color: #4a5568; margin-bottom: 20px; font-size: 0.95rem; }
+  #game-container { position: relative; display: flex; justify-content: space-between; gap: 40px; max-width: 900px; margin: 0 auto; }
+  #svg-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+  .column { flex: 1; display: flex; flex-direction: column; gap: 12px; z-index: 1; }
+  .card {
+    background: white;
+    border: 2px solid #cbd5e0;
+    border-radius: 10px;
+    padding: 12px 16px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    transition: border-color 0.2s, background 0.2s;
+    user-select: none;
+    min-height: 56px;
+    display: flex;
+    align-items: center;
+  }
+  .card:hover { border-color: #667eea; background: #ebf4ff; }
+  .card.selected { border-color: #667eea; background: #ebf4ff; box-shadow: 0 0 0 3px #667eea55; }
+  .card.correct { border-color: #48bb78; background: #f0fff4; pointer-events: none; }
+  .card.wrong { border-color: #fc8181; background: #fff5f5; }
+  #controls { text-align: center; margin-top: 24px; }
+  button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin: 4px;
+  }
+  button:hover { background: #5a67d8; }
+  #message { text-align: center; margin-top: 16px; font-size: 1.1rem; font-weight: bold; color: #2d3748; min-height: 28px; }
+</style>
+</head>
+<body>
+<h1>Begrippenspel - Doelgroepen 3</h1>
+<p id="score">Score: <span id="correct-count">0</span> / 10</p>
+<div id="game-container">
+  <svg id="svg-layer"></svg>
+  <div class="column" id="left-col"></div>
+  <div class="column" id="right-col"></div>
+</div>
+<div id="message"></div>
+<div id="controls">
+  <button onclick="resetGame()">Opnieuw</button>
+</div>
+
+<script>
+const data = [
+  { term: "Diversiteitsdenken", def: "Benadering die de nadruk legt op de meervoudige identiteiten van een persoon en hoe die identiteiten elkaar beinvloeden." },
+  { term: "ACEs", def: "Ingrijpende kind- en jeugdervaringen voor de leeftijd van 18 jaar met een duidelijke impact op de verdere ontwikkeling." },
+  { term: "PACEs", def: "Beschermende en compenserende ervaringen die de veerkracht van kinderen versterken en de negatieve effecten van ACEs compenseren." },
+  { term: "Problematische opvoedingssituatie (POS)", def: "Opvoedingssituatie die door betrokkenen als nagenoeg perspectiefloos wordt ervaren en waarbij men zonder externe hulp de situatie niet kan verbeteren." },
+  { term: "Toxische stress", def: "Langdurige, extreme activatie van het stresssysteem zonder voldoende beschermende factoren, met schadelijke gevolgen voor hersenontwikkeling." },
+  { term: "Complex trauma", def: "Meervoudig trauma waarbij de zorgfiguren betrokken zijn en het trauma verweven zit met de ontwikkelingstaken van het kind." },
+  { term: "Agency", def: "Het gevoel dat je eigen handelen invloed heeft op de situatie; centraal in veerkrachtherstel." },
+  { term: "Veerkrachthuis", def: "Metafoor van Jan Van Gils die veerkracht voorstelt als een huis met vijf bouwstenen: gedragenheid, zingeving, vaardigheden, eigenwaarde en humor." },
+  { term: "Uitholling", def: "Risico waarbij begrippen zoals trauma, veerkracht of veiligheid te breed worden ingezet en hun specifieke betekenis verliezen." },
+  { term: "Kruispuntdenken", def: "Manier van denken over verschil, vertrekkend vanuit de samenhang van kenmerken zoals gender, etniciteit, klasse en seksualiteit." }
+];
+
+let selectedLeft = null;
+let selectedRight = null;
+let correctCount = 0;
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function buildGame() {
+  const shuffledDefs = shuffle(data.map((d, i) => ({ ...d, origIndex: i })));
+  const leftCol = document.getElementById('left-col');
+  const rightCol = document.getElementById('right-col');
+  leftCol.innerHTML = '';
+  rightCol.innerHTML = '';
+
+  data.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.textContent = item.term;
+    card.dataset.index = i;
+    card.dataset.side = 'left';
+    card.addEventListener('click', () => onCardClick(card));
+    leftCol.appendChild(card);
+  });
+
+  shuffledDefs.forEach((item) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.textContent = item.def;
+    card.dataset.index = item.origIndex;
+    card.dataset.side = 'right';
+    card.addEventListener('click', () => onCardClick(card));
+    rightCol.appendChild(card);
+  });
+}
+
+function onCardClick(card) {
+  if (card.classList.contains('correct')) return;
+  const side = card.dataset.side;
+
+  if (side === 'left') {
+    if (selectedLeft) selectedLeft.classList.remove('selected');
+    selectedLeft = card;
+    card.classList.add('selected');
+  } else {
+    if (selectedRight) selectedRight.classList.remove('selected');
+    selectedRight = card;
+    card.classList.add('selected');
+  }
+
+  if (selectedLeft && selectedRight) checkMatch();
+}
+
+function checkMatch() {
+  const li = parseInt(selectedLeft.dataset.index);
+  const ri = parseInt(selectedRight.dataset.index);
+
+  if (li === ri) {
+    selectedLeft.classList.remove('selected');
+    selectedRight.classList.remove('selected');
+    selectedLeft.classList.add('correct');
+    selectedRight.classList.add('correct');
+    drawLine(selectedLeft, selectedRight, '#48bb78');
+    correctCount++;
+    document.getElementById('correct-count').textContent = correctCount;
+    if (correctCount === data.length) {
+      document.getElementById('message').textContent = 'Geweldig! Alle begrippen correct gekoppeld!';
+    }
+  } else {
+    selectedLeft.classList.add('wrong');
+    selectedRight.classList.add('wrong');
+    setTimeout(() => {
+      selectedLeft.classList.remove('wrong', 'selected');
+      selectedRight.classList.remove('wrong', 'selected');
+      selectedLeft = null;
+      selectedRight = null;
+    }, 700);
+    return;
+  }
+  selectedLeft = null;
+  selectedRight = null;
+}
+
+function drawLine(leftCard, rightCard, color) {
+  const svg = document.getElementById('svg-layer');
+  const container = document.getElementById('game-container');
+  const containerRect = container.getBoundingClientRect();
+  const lRect = leftCard.getBoundingClientRect();
+  const rRect = rightCard.getBoundingClientRect();
+
+  const x1 = lRect.right - containerRect.left;
+  const y1 = lRect.top + lRect.height / 2 - containerRect.top;
+  const x2 = rRect.left - containerRect.left;
+  const y2 = rRect.top + rRect.height / 2 - containerRect.top;
+
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+  line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+  line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+  line.setAttribute('stroke', color);
+  line.setAttribute('stroke-width', '2.5');
+  line.setAttribute('stroke-linecap', 'round');
+  svg.appendChild(line);
+}
+
+function resetGame() {
+  correctCount = 0;
+  selectedLeft = null;
+  selectedRight = null;
+  document.getElementById('correct-count').textContent = 0;
+  document.getElementById('message').textContent = '';
+  document.getElementById('svg-layer').innerHTML = '';
+  buildGame();
+}
+
+window.onload = buildGame;
+window.addEventListener('resize', () => {
+  document.getElementById('svg-layer').innerHTML = '';
+});
+</script>
+</body>
+</html>
