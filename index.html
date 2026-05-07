@@ -1,5 +1,4 @@
-
-html = '''<!DOCTYPE html>
+html = """<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
@@ -49,7 +48,7 @@ html = '''<!DOCTYPE html>
 </head>
 <body>
 <h1>Begrippenspel - Doelgroepen 3</h1>
-<p id="score">Score: <span id="correct-count">0</span> / <span id="total">10</span></p>
+<p id="score">Score: <span id="correct-count">0</span> / <span id="total">29</span></p>
 <p id="round-info"></p>
 <div id="game-container">
   <svg id="svg-layer"></svg>
@@ -102,6 +101,7 @@ let selectedLeft = null;
 let selectedRight = null;
 let roundCorrect = 0;
 let currentData = [];
+let rounds = [];
 
 function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -109,14 +109,12 @@ function shuffle(arr) {
 
 function getRounds() {
   const shuffled = shuffle(allData);
-  const rounds = [];
+  const result = [];
   for (let i = 0; i < shuffled.length; i += ROUND_SIZE) {
-    rounds.push(shuffled.slice(i, i + ROUND_SIZE));
+    result.push(shuffled.slice(i, i + ROUND_SIZE));
   }
-  return rounds;
+  return result;
 }
-
-let rounds = [];
 
 function buildGame() {
   currentData = rounds[currentRound];
@@ -127,8 +125,7 @@ function buildGame() {
   document.getElementById('message').textContent = '';
   document.getElementById('next-btn').style.display = 'none';
   document.getElementById('correct-count').textContent = totalCorrect;
-  document.getElementById('total').textContent = allData.length;
-  document.getElementById('round-info').textContent = `Ronde ${currentRound + 1} van ${rounds.length} (${currentData.length} begrippen)`;
+  document.getElementById('round-info').textContent = 'Ronde ' + (currentRound + 1) + ' van ' + rounds.length + ' (' + currentData.length + ' begrippen)';
 
   const shuffledDefs = shuffle(currentData.map((d, i) => ({ ...d, origIndex: i })));
   const leftCol = document.getElementById('left-col');
@@ -175,7 +172,6 @@ function onCardClick(card) {
 function checkMatch() {
   const li = parseInt(selectedLeft.dataset.index);
   const ri = parseInt(selectedRight.dataset.index);
-
   if (li === ri) {
     selectedLeft.classList.remove('selected');
     selectedRight.classList.remove('selected');
@@ -190,7 +186,7 @@ function checkMatch() {
         document.getElementById('message').textContent = 'Ronde voltooid!';
         document.getElementById('next-btn').style.display = 'inline-block';
       } else {
-        document.getElementById('message').textContent = 'Alle ' + allData.length + ' begrippen correct! Geweldig!';
+        document.getElementById('message').textContent = 'Alle 29 begrippen correct! Geweldig!';
       }
     }
   } else {
@@ -245,7 +241,7 @@ window.addEventListener('resize', () => {
 });
 </script>
 </body>
-</html>'''
+</html>"""
 
 with open('/root/output/index.html', 'w', encoding='utf-8') as f:
     f.write(html)
