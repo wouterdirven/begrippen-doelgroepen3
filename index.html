@@ -215,11 +215,11 @@ function buildStartScreen() {
   for (const [name, begrippen] of Object.entries(allSources)) {
     const btn = document.createElement('button');
     btn.className = 'source-btn';
-    btn.innerHTML = \`
-      <div class="icon">\${ICONS[name] || '📚'}</div>
-      <div>\${name}</div>
-      <div class="count">\${begrippen.length} begrippen</div>
-    \`;
+    btn.innerHTML = `
+      <div class="icon">${ICONS[name] || '📚'}</div>
+      <div>${name}</div>
+      <div class="count">${begrippen.length} begrippen</div>
+    `;
     btn.addEventListener('click', () => startGame(name));
     container.appendChild(btn);
   }
