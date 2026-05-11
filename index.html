@@ -17,16 +17,8 @@
     min-height: 80vh;
     gap: 32px;
   }
-  #start-screen h1 {
-    font-size: 2rem;
-    color: #2d3748;
-    text-align: center;
-  }
-  #start-screen p {
-    color: #4a5568;
-    font-size: 1rem;
-    text-align: center;
-  }
+  #start-screen h1 { font-size: 2rem; color: #2d3748; text-align: center; }
+  #start-screen p { color: #4a5568; font-size: 1rem; text-align: center; }
   #source-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -47,17 +39,48 @@
     text-align: center;
     line-height: 1.4;
   }
-  .source-btn:hover {
-    border-color: #667eea;
-    background: #ebf4ff;
-    transform: translateY(-2px);
-  }
+  .source-btn:hover { border-color: #667eea; background: #ebf4ff; transform: translateY(-2px); }
   .source-btn .icon { font-size: 2rem; margin-bottom: 10px; }
   .source-btn .count { font-size: 0.8rem; color: #718096; font-weight: normal; margin-top: 6px; }
 
-  /* ===== SPELSCHERM ===== */
-  #game-screen { display: none; }
-  #game-header {
+  /* ===== SPELTYPE SCHERM ===== */
+  #mode-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80vh;
+    gap: 32px;
+  }
+  #mode-screen h1 { font-size: 1.6rem; color: #2d3748; text-align: center; }
+  #mode-screen p { color: #4a5568; text-align: center; }
+  #mode-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 500px;
+  }
+  .mode-btn {
+    background: white;
+    border: 2px solid #cbd5e0;
+    border-radius: 16px;
+    padding: 32px 20px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #2d3748;
+    transition: border-color 0.2s, background 0.2s, transform 0.1s;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .mode-btn:hover { border-color: #667eea; background: #ebf4ff; transform: translateY(-2px); }
+  .mode-btn .mode-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .mode-btn .mode-desc { font-size: 0.8rem; color: #718096; font-weight: normal; margin-top: 6px; }
+
+  /* ===== GEDEELDE GAME HEADER ===== */
+  .game-screen { display: none; }
+  .game-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -66,7 +89,7 @@
     flex-wrap: wrap;
     gap: 8px;
   }
-  #back-btn {
+  .back-btn {
     background: #e2e8f0;
     color: #4a5568;
     border: none;
@@ -75,11 +98,30 @@
     font-size: 0.9rem;
     cursor: pointer;
   }
-  #back-btn:hover { background: #cbd5e0; }
+  .back-btn:hover { background: #cbd5e0; }
   h1.game-title { text-align: center; color: #2d3748; font-size: 1.3rem; flex: 1; }
-  #score { text-align: center; color: #4a5568; margin-bottom: 6px; font-size: 0.95rem; max-width: 900px; margin: 0 auto 6px; }
-  #round-info { text-align: center; color: #667eea; margin-bottom: 16px; font-size: 0.9rem; font-weight: bold; max-width: 900px; margin: 0 auto 16px; }
-  #game-container {
+  .score-line { text-align: center; color: #4a5568; margin-bottom: 6px; font-size: 0.95rem; max-width: 900px; margin: 0 auto 6px; }
+  .round-info { text-align: center; color: #667eea; margin-bottom: 16px; font-size: 0.9rem; font-weight: bold; max-width: 900px; margin: 0 auto 16px; }
+
+  /* Progress balk */
+  .progress-wrap {
+    max-width: 900px;
+    margin: 0 auto 12px;
+    background: #e2e8f0;
+    border-radius: 8px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%;
+    background: #667eea;
+    border-radius: 8px;
+    transition: width 0.4s;
+    width: 0%;
+  }
+
+  /* ===== KOPPELSPEL ===== */
+  #match-game-container {
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -113,8 +155,84 @@
   .card.selected { border-color: #667eea; background: #ebf4ff; box-shadow: 0 0 0 3px #667eea55; }
   .card.correct { border-color: #48bb78; background: #f0fff4; pointer-events: none; }
   .card.wrong { border-color: #fc8181; background: #fff5f5; }
-  #controls { text-align: center; margin-top: 24px; }
-  button.action-btn {
+
+  /* ===== INVULSPEL ===== */
+  #type-game-container {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .type-card {
+    background: white;
+    border: 2px solid #cbd5e0;
+    border-radius: 14px;
+    padding: 20px;
+    transition: border-color 0.3s;
+  }
+  .type-card.correct { border-color: #48bb78; background: #f0fff4; }
+  .type-card.wrong-flash { border-color: #fc8181; background: #fff5f5; }
+  .type-card.revealed { border-color: #ed8936; background: #fffaf0; }
+  .def-text {
+    font-size: 0.9rem;
+    color: #4a5568;
+    line-height: 1.5;
+    margin-bottom: 14px;
+  }
+  .input-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .term-input {
+    flex: 1;
+    min-width: 180px;
+    border: 2px solid #cbd5e0;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .term-input:focus { border-color: #667eea; }
+  .term-input:disabled { background: #f7fafc; color: #4a5568; }
+  .check-btn {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .check-btn:hover { background: #5a67d8; }
+  .reveal-btn {
+    background: #e2e8f0;
+    color: #4a5568;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .reveal-btn:hover { background: #cbd5e0; }
+  .feedback-text {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    min-height: 20px;
+  }
+  .feedback-text.ok { color: #38a169; }
+  .feedback-text.fout { color: #e53e3e; }
+  .feedback-text.hint { color: #dd6b20; }
+
+  /* Gedeelde knoppen */
+  .controls { text-align: center; margin-top: 24px; }
+  .action-btn {
     background: #667eea;
     color: white;
     border: none;
@@ -124,66 +242,84 @@
     cursor: pointer;
     margin: 4px;
   }
-  button.action-btn:hover { background: #5a67d8; }
-  button.action-btn.secondary {
-    background: #e2e8f0;
-    color: #4a5568;
-  }
-  button.action-btn.secondary:hover { background: #cbd5e0; }
-  #message { text-align: center; margin-top: 16px; font-size: 1.1rem; font-weight: bold; color: #2d3748; min-height: 28px; }
-
-  /* ===== PROGRESSBALK ===== */
-  #progress-bar-wrap {
-    max-width: 900px;
-    margin: 0 auto 12px;
-    background: #e2e8f0;
-    border-radius: 8px;
-    height: 8px;
-    overflow: hidden;
-  }
-  #progress-bar {
-    height: 100%;
-    background: #667eea;
-    border-radius: 8px;
-    transition: width 0.4s;
-    width: 0%;
-  }
+  .action-btn:hover { background: #5a67d8; }
+  .action-btn.secondary { background: #e2e8f0; color: #4a5568; }
+  .action-btn.secondary:hover { background: #cbd5e0; }
+  .message { text-align: center; margin-top: 16px; font-size: 1.1rem; font-weight: bold; color: #2d3748; min-height: 28px; }
 
   @media (max-width: 600px) {
     #source-buttons { grid-template-columns: 1fr; }
-    #game-container { flex-direction: column; gap: 16px; }
+    #mode-buttons { grid-template-columns: 1fr; }
+    #match-game-container { flex-direction: column; gap: 16px; }
     #svg-layer { display: none; }
   }
 </style>
 </head>
 <body>
 
-<!-- STARTSCHERM -->
+<!-- STARTSCHERM: kies bron -->
 <div id="start-screen">
   <h1>Begrippenspel</h1>
-  <p>Kies een onderwerp en koppel termen aan de juiste definities.</p>
+  <p>Kies een onderwerp om te oefenen.</p>
   <div id="source-buttons"></div>
 </div>
 
-<!-- SPELSCHERM -->
-<div id="game-screen">
-  <div id="game-header">
-    <button id="back-btn" onclick="goBack()">&#8592; Terug</button>
-    <h1 class="game-title" id="game-title">Spel</h1>
+<!-- SPELTYPE SCHERM: kies speltype -->
+<div id="mode-screen">
+  <button class="back-btn" onclick="goToStart()">&#8592; Terug</button>
+  <h1 id="mode-title">Kies een speltype</h1>
+  <p id="mode-subtitle"></p>
+  <div id="mode-buttons">
+    <button class="mode-btn" onclick="startMatchGame()">
+      <div class="mode-icon">🔗</div>
+      <div>Koppelspel</div>
+      <div class="mode-desc">Verbind termen met de juiste definitie</div>
+    </button>
+    <button class="mode-btn" onclick="startTypeGame()">
+      <div class="mode-icon">✏️</div>
+      <div>Invulspel</div>
+      <div class="mode-desc">Typ de term bij de definitie</div>
+    </button>
+  </div>
+</div>
+
+<!-- KOPPELSPEL -->
+<div id="match-screen" class="game-screen">
+  <div class="game-header">
+    <button class="back-btn" onclick="goToMode()">&#8592; Terug</button>
+    <h1 class="game-title" id="match-title"></h1>
     <div style="width:80px"></div>
   </div>
-  <p id="score">Score: <span id="correct-count">0</span> / <span id="total">0</span></p>
-  <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
-  <p id="round-info"></p>
-  <div id="game-container">
+  <p class="score-line">Score: <span id="match-correct">0</span> / <span id="match-total">0</span></p>
+  <div class="progress-wrap"><div class="progress-bar" id="match-progress"></div></div>
+  <p class="round-info" id="match-round-info"></p>
+  <div id="match-game-container">
     <svg id="svg-layer"></svg>
     <div class="column" id="left-col"></div>
     <div class="column" id="right-col"></div>
   </div>
-  <div id="message"></div>
-  <div id="controls">
-    <button class="action-btn" onclick="nextRound()" id="next-btn" style="display:none">Volgende ronde</button>
-    <button class="action-btn secondary" onclick="resetGame()">Opnieuw</button>
+  <div class="message" id="match-message"></div>
+  <div class="controls">
+    <button class="action-btn" onclick="matchNextRound()" id="match-next-btn" style="display:none">Volgende ronde</button>
+    <button class="action-btn secondary" onclick="resetMatchGame()">Opnieuw</button>
+  </div>
+</div>
+
+<!-- INVULSPEL -->
+<div id="type-screen" class="game-screen">
+  <div class="game-header">
+    <button class="back-btn" onclick="goToMode()">&#8592; Terug</button>
+    <h1 class="game-title" id="type-title"></h1>
+    <div style="width:80px"></div>
+  </div>
+  <p class="score-line">Score: <span id="type-correct">0</span> / <span id="type-total">0</span></p>
+  <div class="progress-wrap"><div class="progress-bar" id="type-progress"></div></div>
+  <p class="round-info" id="type-round-info"></p>
+  <div id="type-game-container"></div>
+  <div class="message" id="type-message"></div>
+  <div class="controls">
+    <button class="action-btn" onclick="typeNextRound()" id="type-next-btn" style="display:none">Volgende ronde</button>
+    <button class="action-btn secondary" onclick="resetTypeGame()">Opnieuw</button>
   </div>
 </div>
 
@@ -193,20 +329,36 @@ const allSources = {"Doelgroepen 3 - Deel 1": [{"term": "ACEs (Adverse Childhood
 const ICONS = {
   "Doelgroepen 3 - Deel 1": "🧠",
   "Doelgroepen 3 - Deel 2": "😤",
-  "Visuele Beperking": "👁",
+  "Visuele Beperking": "👁️",
   "NBM 2025-2026": "🌍"
 };
 
 const ROUND_SIZE = 10;
 let currentSourceName = null;
 let currentSourceData = [];
-let currentRound = 0;
-let totalCorrect = 0;
-let selectedLeft = null;
-let selectedRight = null;
-let roundCorrect = 0;
-let currentRoundData = [];
-let rounds = [];
+
+// ===== NAVIGATIE =====
+function showScreen(id) {
+  ['start-screen','mode-screen','match-screen','type-screen'].forEach(s => {
+    const el = document.getElementById(s);
+    if (el) {
+      el.style.display = 'none';
+      el.classList.remove('game-screen');
+    }
+  });
+  const target = document.getElementById(id);
+  if (target) {
+    target.style.display = id === 'start-screen' || id === 'mode-screen' ? 'flex' : 'block';
+  }
+}
+
+function goToStart() {
+  showScreen('start-screen');
+}
+
+function goToMode() {
+  showScreen('mode-screen');
+}
 
 // ===== STARTSCHERM =====
 function buildStartScreen() {
@@ -215,41 +367,27 @@ function buildStartScreen() {
   for (const [name, begrippen] of Object.entries(allSources)) {
     const btn = document.createElement('button');
     btn.className = 'source-btn';
-    btn.innerHTML = `
-      <div class="icon">${ICONS[name] || '📚'}</div>
-      <div>${name}</div>
-      <div class="count">${begrippen.length} begrippen</div>
-    `;
-    btn.addEventListener('click', () => startGame(name));
+    btn.innerHTML = `<div class="icon">${ICONS[name] || '📚'}</div><div>${name}</div><div class="count">${begrippen.length} begrippen</div>`;
+    btn.addEventListener('click', () => selectSource(name));
     container.appendChild(btn);
   }
 }
 
-function startGame(sourceName) {
-  currentSourceName = sourceName;
-  currentSourceData = allSources[sourceName];
-  currentRound = 0;
-  totalCorrect = 0;
-  document.getElementById('game-title').textContent = sourceName;
-  document.getElementById('total').textContent = currentSourceData.length;
-  document.getElementById('start-screen').style.display = 'none';
-  document.getElementById('game-screen').style.display = 'block';
-  rounds = getRounds();
-  buildGame();
+function selectSource(name) {
+  currentSourceName = name;
+  currentSourceData = allSources[name];
+  document.getElementById('mode-title').textContent = name;
+  document.getElementById('mode-subtitle').textContent = currentSourceData.length + ' begrippen beschikbaar';
+  showScreen('mode-screen');
 }
 
-function goBack() {
-  document.getElementById('game-screen').style.display = 'none';
-  document.getElementById('start-screen').style.display = 'flex';
-}
-
-// ===== SPELLOGICA =====
+// ===== HULPFUNCTIES =====
 function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function getRounds() {
-  const shuffled = shuffle(currentSourceData);
+function getRounds(data) {
+  const shuffled = shuffle(data);
   const result = [];
   for (let i = 0; i < shuffled.length; i += ROUND_SIZE) {
     result.push(shuffled.slice(i, i + ROUND_SIZE));
@@ -257,38 +395,52 @@ function getRounds() {
   return result;
 }
 
-function updateProgress() {
-  const pct = (totalCorrect / currentSourceData.length) * 100;
-  document.getElementById('progress-bar').style.width = pct + '%';
+// ===== KOPPELSPEL =====
+let matchRounds = [];
+let matchCurrentRound = 0;
+let matchTotalCorrect = 0;
+let matchRoundCorrect = 0;
+let matchRoundData = [];
+let matchSelectedLeft = null;
+let matchSelectedRight = null;
+
+function startMatchGame() {
+  matchCurrentRound = 0;
+  matchTotalCorrect = 0;
+  document.getElementById('match-title').textContent = currentSourceName;
+  document.getElementById('match-total').textContent = currentSourceData.length;
+  matchRounds = getRounds(currentSourceData);
+  showScreen('match-screen');
+  buildMatchRound();
 }
 
-function buildGame() {
-  currentRoundData = rounds[currentRound];
-  roundCorrect = 0;
-  selectedLeft = null;
-  selectedRight = null;
+function buildMatchRound() {
+  matchRoundData = matchRounds[matchCurrentRound];
+  matchRoundCorrect = 0;
+  matchSelectedLeft = null;
+  matchSelectedRight = null;
   document.getElementById('svg-layer').innerHTML = '';
-  document.getElementById('message').textContent = '';
-  document.getElementById('next-btn').style.display = 'none';
-  document.getElementById('correct-count').textContent = totalCorrect;
-  document.getElementById('round-info').textContent =
-    'Ronde ' + (currentRound + 1) + ' van ' + rounds.length +
-    ' (' + currentRoundData.length + ' begrippen)';
-  updateProgress();
+  document.getElementById('match-message').textContent = '';
+  document.getElementById('match-next-btn').style.display = 'none';
+  document.getElementById('match-correct').textContent = matchTotalCorrect;
+  document.getElementById('match-round-info').textContent =
+    'Ronde ' + (matchCurrentRound + 1) + ' van ' + matchRounds.length +
+    ' (' + matchRoundData.length + ' begrippen)';
+  updateMatchProgress();
 
-  const shuffledDefs = shuffle(currentRoundData.map((d, i) => ({ ...d, origIndex: i })));
+  const shuffledDefs = shuffle(matchRoundData.map((d, i) => ({ ...d, origIndex: i })));
   const leftCol = document.getElementById('left-col');
   const rightCol = document.getElementById('right-col');
   leftCol.innerHTML = '';
   rightCol.innerHTML = '';
 
-  currentRoundData.forEach((item, i) => {
+  matchRoundData.forEach((item, i) => {
     const card = document.createElement('div');
     card.className = 'card';
     card.textContent = item.term;
     card.dataset.index = i;
     card.dataset.side = 'left';
-    card.addEventListener('click', () => onCardClick(card));
+    card.addEventListener('click', () => onMatchClick(card));
     leftCol.appendChild(card);
   });
 
@@ -298,66 +450,66 @@ function buildGame() {
     card.textContent = item.def;
     card.dataset.index = item.origIndex;
     card.dataset.side = 'right';
-    card.addEventListener('click', () => onCardClick(card));
+    card.addEventListener('click', () => onMatchClick(card));
     rightCol.appendChild(card);
   });
 }
 
-function onCardClick(card) {
+function onMatchClick(card) {
   if (card.classList.contains('correct')) return;
   const side = card.dataset.side;
   if (side === 'left') {
-    if (selectedLeft) selectedLeft.classList.remove('selected');
-    selectedLeft = card;
+    if (matchSelectedLeft) matchSelectedLeft.classList.remove('selected');
+    matchSelectedLeft = card;
     card.classList.add('selected');
   } else {
-    if (selectedRight) selectedRight.classList.remove('selected');
-    selectedRight = card;
+    if (matchSelectedRight) matchSelectedRight.classList.remove('selected');
+    matchSelectedRight = card;
     card.classList.add('selected');
   }
-  if (selectedLeft && selectedRight) checkMatch();
+  if (matchSelectedLeft && matchSelectedRight) checkMatchPair();
 }
 
-function checkMatch() {
-  const li = parseInt(selectedLeft.dataset.index);
-  const ri = parseInt(selectedRight.dataset.index);
+function checkMatchPair() {
+  const li = parseInt(matchSelectedLeft.dataset.index);
+  const ri = parseInt(matchSelectedRight.dataset.index);
   if (li === ri) {
-    selectedLeft.classList.remove('selected');
-    selectedRight.classList.remove('selected');
-    selectedLeft.classList.add('correct');
-    selectedRight.classList.add('correct');
-    drawLine(selectedLeft, selectedRight, '#48bb78');
-    roundCorrect++;
-    totalCorrect++;
-    document.getElementById('correct-count').textContent = totalCorrect;
-    updateProgress();
-    if (roundCorrect === currentRoundData.length) {
-      if (currentRound + 1 < rounds.length) {
-        document.getElementById('message').textContent = 'Ronde voltooid! Goed bezig!';
-        document.getElementById('next-btn').style.display = 'inline-block';
+    matchSelectedLeft.classList.remove('selected');
+    matchSelectedRight.classList.remove('selected');
+    matchSelectedLeft.classList.add('correct');
+    matchSelectedRight.classList.add('correct');
+    drawLine(matchSelectedLeft, matchSelectedRight, '#48bb78');
+    matchRoundCorrect++;
+    matchTotalCorrect++;
+    document.getElementById('match-correct').textContent = matchTotalCorrect;
+    updateMatchProgress();
+    if (matchRoundCorrect === matchRoundData.length) {
+      if (matchCurrentRound + 1 < matchRounds.length) {
+        document.getElementById('match-message').textContent = 'Ronde voltooid! Goed bezig!';
+        document.getElementById('match-next-btn').style.display = 'inline-block';
       } else {
-        document.getElementById('message').textContent =
+        document.getElementById('match-message').textContent =
           'Alle ' + currentSourceData.length + ' begrippen correct! Geweldig!';
       }
     }
   } else {
-    selectedLeft.classList.add('wrong');
-    selectedRight.classList.add('wrong');
+    matchSelectedLeft.classList.add('wrong');
+    matchSelectedRight.classList.add('wrong');
     setTimeout(() => {
-      if (selectedLeft) selectedLeft.classList.remove('wrong', 'selected');
-      if (selectedRight) selectedRight.classList.remove('wrong', 'selected');
-      selectedLeft = null;
-      selectedRight = null;
+      if (matchSelectedLeft) matchSelectedLeft.classList.remove('wrong','selected');
+      if (matchSelectedRight) matchSelectedRight.classList.remove('wrong','selected');
+      matchSelectedLeft = null;
+      matchSelectedRight = null;
     }, 700);
     return;
   }
-  selectedLeft = null;
-  selectedRight = null;
+  matchSelectedLeft = null;
+  matchSelectedRight = null;
 }
 
 function drawLine(leftCard, rightCard, color) {
   const svg = document.getElementById('svg-layer');
-  const container = document.getElementById('game-container');
+  const container = document.getElementById('match-game-container');
   const containerRect = container.getBoundingClientRect();
   const lRect = leftCard.getBoundingClientRect();
   const rRect = rightCard.getBoundingClientRect();
@@ -374,24 +526,189 @@ function drawLine(leftCard, rightCard, color) {
   svg.appendChild(line);
 }
 
-function nextRound() {
-  currentRound++;
-  buildGame();
-}
-
-function resetGame() {
-  currentRound = 0;
-  totalCorrect = 0;
-  rounds = getRounds();
-  buildGame();
+function matchNextRound() { matchCurrentRound++; buildMatchRound(); }
+function resetMatchGame() { matchCurrentRound = 0; matchTotalCorrect = 0; matchRounds = getRounds(currentSourceData); buildMatchRound(); }
+function updateMatchProgress() {
+  const pct = (matchTotalCorrect / currentSourceData.length) * 100;
+  document.getElementById('match-progress').style.width = pct + '%';
 }
 
 window.addEventListener('resize', () => {
   document.getElementById('svg-layer').innerHTML = '';
 });
 
-// Start
+// ===== INVULSPEL =====
+let typeRounds = [];
+let typeCurrentRound = 0;
+let typeTotalCorrect = 0;
+let typeRoundCorrect = 0;
+let typeRoundData = [];
+let typeRoundDone = 0;
+
+function startTypeGame() {
+  typeCurrentRound = 0;
+  typeTotalCorrect = 0;
+  document.getElementById('type-title').textContent = currentSourceName;
+  document.getElementById('type-total').textContent = currentSourceData.length;
+  typeRounds = getRounds(currentSourceData);
+  showScreen('type-screen');
+  buildTypeRound();
+}
+
+function buildTypeRound() {
+  typeRoundData = typeRounds[typeCurrentRound];
+  typeRoundCorrect = 0;
+  typeRoundDone = 0;
+  document.getElementById('type-message').textContent = '';
+  document.getElementById('type-next-btn').style.display = 'none';
+  document.getElementById('type-correct').textContent = typeTotalCorrect;
+  document.getElementById('type-round-info').textContent =
+    'Ronde ' + (typeCurrentRound + 1) + ' van ' + typeRounds.length +
+    ' (' + typeRoundData.length + ' begrippen)';
+  updateTypeProgress();
+
+  const container = document.getElementById('type-game-container');
+  container.innerHTML = '';
+
+  typeRoundData.forEach((item, i) => {
+    const card = document.createElement('div');
+    card.className = 'type-card';
+    card.dataset.index = i;
+
+    const defText = document.createElement('div');
+    defText.className = 'def-text';
+    defText.textContent = item.def;
+
+    const inputRow = document.createElement('div');
+    inputRow.className = 'input-row';
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'term-input';
+    input.placeholder = 'Typ hier de term...';
+    input.dataset.index = i;
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') checkTypeAnswer(i);
+    });
+
+    const checkBtn = document.createElement('button');
+    checkBtn.className = 'check-btn';
+    checkBtn.textContent = 'Controleer';
+    checkBtn.addEventListener('click', () => checkTypeAnswer(i));
+
+    const revealBtn = document.createElement('button');
+    revealBtn.className = 'reveal-btn';
+    revealBtn.textContent = 'Toon antwoord';
+    revealBtn.addEventListener('click', () => revealTypeAnswer(i));
+
+    inputRow.appendChild(input);
+    inputRow.appendChild(checkBtn);
+    inputRow.appendChild(revealBtn);
+
+    const feedback = document.createElement('div');
+    feedback.className = 'feedback-text';
+    feedback.id = 'feedback-' + i;
+
+    card.appendChild(defText);
+    card.appendChild(inputRow);
+    card.appendChild(feedback);
+    container.appendChild(card);
+  });
+}
+
+function normalizeAnswer(str) {
+  return str.toLowerCase()
+    .replace(/[\(\)]/g, '')
+    .replace(/[àáâã]/g, 'a')
+    .replace(/[èéêë]/g, 'e')
+    .replace(/[ìíîï]/g, 'i')
+    .replace(/[òóôõ]/g, 'o')
+    .replace(/[ùúûü]/g, 'u')
+    .replace(/[^a-z0-9 ]/g, '')
+    .trim();
+}
+
+function checkTypeAnswer(i) {
+  const card = document.querySelector('.type-card[data-index="' + i + '"]');
+  if (card.classList.contains('correct') || card.classList.contains('revealed')) return;
+
+  const input = card.querySelector('.term-input');
+  const feedback = document.getElementById('feedback-' + i);
+  const correctTerm = typeRoundData[i].term;
+  const userAnswer = input.value;
+
+  if (!userAnswer.trim()) return;
+
+  const norm = normalizeAnswer(userAnswer);
+  const normCorrect = normalizeAnswer(correctTerm);
+
+  // Exacte match of de antwoord bevat de kernwoorden
+  const isCorrect = norm === normCorrect ||
+    normCorrect.includes(norm) && norm.length > 4 ||
+    norm.includes(normCorrect);
+
+  if (isCorrect) {
+    card.classList.add('correct');
+    feedback.className = 'feedback-text ok';
+    feedback.textContent = 'Correct!';
+    input.disabled = true;
+    card.querySelectorAll('button').forEach(b => b.disabled = true);
+    typeRoundCorrect++;
+    typeTotalCorrect++;
+    typeRoundDone++;
+    document.getElementById('type-correct').textContent = typeTotalCorrect;
+    updateTypeProgress();
+    checkTypeRoundDone();
+  } else {
+    feedback.className = 'feedback-text fout';
+    feedback.textContent = 'Niet juist, probeer opnieuw.';
+    input.classList.add('wrong');
+    setTimeout(() => input.classList.remove('wrong'), 600);
+  }
+}
+
+function revealTypeAnswer(i) {
+  const card = document.querySelector('.type-card[data-index="' + i + '"]');
+  if (card.classList.contains('correct')) return;
+
+  const input = card.querySelector('.term-input');
+  const feedback = document.getElementById('feedback-' + i);
+  const correctTerm = typeRoundData[i].term;
+
+  card.classList.add('revealed');
+  input.value = correctTerm;
+  input.disabled = true;
+  card.querySelectorAll('button').forEach(b => b.disabled = true);
+  feedback.className = 'feedback-text hint';
+  feedback.textContent = 'Antwoord getoond.';
+  typeRoundDone++;
+  checkTypeRoundDone();
+}
+
+function checkTypeRoundDone() {
+  if (typeRoundDone === typeRoundData.length) {
+    if (typeCurrentRound + 1 < typeRounds.length) {
+      document.getElementById('type-message').textContent = 'Ronde voltooid!';
+      document.getElementById('type-next-btn').style.display = 'inline-block';
+    } else {
+      document.getElementById('type-message').textContent =
+        typeRoundCorrect === typeRoundData.length
+          ? 'Alle begrippen correct! Geweldig!'
+          : 'Klaar! Je had ' + typeTotalCorrect + ' van de ' + currentSourceData.length + ' correct.';
+    }
+  }
+}
+
+function typeNextRound() { typeCurrentRound++; buildTypeRound(); }
+function resetTypeGame() { typeCurrentRound = 0; typeTotalCorrect = 0; typeRounds = getRounds(currentSourceData); buildTypeRound(); }
+function updateTypeProgress() {
+  const pct = (typeTotalCorrect / currentSourceData.length) * 100;
+  document.getElementById('type-progress').style.width = pct + '%';
+}
+
+// ===== START =====
 buildStartScreen();
+showScreen('start-screen');
 </script>
 </body>
 </html>
